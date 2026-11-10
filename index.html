@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="시공간 그래프 신경망 기반 실시간 이상거래탐지 및 소상공인 농생명 설명가능 대안신용평가 핀테크 플랫폼">
+<title>AegisFin AI : 그래프 신경망 이상거래탐지 및 대안신용평가 플랫폼</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* Hallmark — Obsidian Financial Terminal · #0B0F17 · IBM Plex Sans KR */
+:root {
+  --bg-primary: #0B0F17;
+  --bg-elevated: #121824;
+  --bg-panel: rgba(18, 24, 36, 0.92);
+  --bg-subtle: rgba(27, 36, 54, 0.72);
+  --bg-chip: rgba(45, 212, 191, 0.12);
+  --bg-chip-warn: rgba(245, 158, 11, 0.14);
+  --bg-chip-danger: rgba(244, 63, 94, 0.15);
+  --text-primary: #F3F6FA;
+  --text-secondary: #B4C0D3;
+  --text-muted: #7B8BA4;
+  --text-dark: #071018;
+  --accent-teal: #2DD4BF;
+  --accent-amber: #F59E0B;
+  --accent-crimson: #F43F5E;
+  --accent-blue: #38BDF8;
+  --border-hairline: rgba(148, 163, 184, 0.18);
+  --border-accent: rgba(45, 212, 191, 0.45);
+  --font-sans: 'IBM Plex Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: clip;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-teal);
+  outline-offset: 2px;
+}
+
+.app-shell {
+  max-width: 1420px;
+  margin: 0 auto;
+  padding: 20px 24px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-hairline);
+  border-radius: 12px;
+}
+
+.brand-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.brand-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.brand-sub {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.metrics-bar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.metric-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metric-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.metric-val {
+  font-family: var(--font-mono);
+  font-size: 1.02rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.metric-val.teal { color: var(--accent-teal); }
+.metric-val.amber { color: var(--accent-amber); }
+.metric-val.crimson { color: var(--accent-crimson); }
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-primary {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--accent-teal);
+  background: var(--accent-teal);
+  color: var(--text-dark);
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.btn-primary:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-ghost {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border-hairline);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-ghost:hover {
+  border-color: var(--border-accent);
+  color: var(--text-primary);
+}
+
+.btn-ghost:active {
+  background: var(--bg-chip);
+}
+
+.btn-ghost:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn-ghost.active {
+  border-color: var(--accent-teal);
+  color: var(--accent-teal);
+  background: var(--bg-chip);
+}
+
+.workspace-grid {
+  display: grid;
+  grid-template-columns: 1.28fr 1fr;
+  gap: 20px;
+}
+
+.panel-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-hairline);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--border-hairline);
+  padding-bottom: 12px;
+}
+
+.panel-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.panel-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.status-pill {
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  background: var(--bg-chip);
+  color: var(--accent-teal);
+  border: 1px solid var(--border-accent);
+  white-space: nowrap;
+}
+
+.status-pill.danger {
+  background: var(--bg-chip-danger);
+  color: var(--accent-crimson);
+  border-color: var(--accent-crimson);
+}
+
+.canvas-frame {
+  position: relative;
+  width: 100%;
+  height: 360px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-hairline);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+#gnn-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: pointer;
+}
+
+.canvas-legend {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  display: flex;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-hairline);
+  border-radius: 8px;
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+}
+
+.scenario-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.inspector-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.inspector-box {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inspector-title {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.inspector-main {
+  font-family: var(--font-mono);
+  font-size: 0.96rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.inspector-sub {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.acs-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.control-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.control-label-wrap {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+}
+
+.control-val {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--accent-teal);
+  font-variant-numeric: tabular-nums;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent-teal);
+  cursor: pointer;
+}
+
+.score-comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.score-box {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.score-box.highlight {
+  border-color: var(--border-accent);
+  background: var(--bg-chip);
+}
+
+.score-num {
+  font-family: var(--font-mono);
+  font-size: 1.55rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.shap-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.shap-row {
+  display: grid;
+  grid-template-columns: 156px 1fr 68px;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.8rem;
+}
+
+.shap-track {
+  width: 100%;
+  height: 12px;
+  background: var(--bg-elevated);
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.shap-bar {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent-teal);
+  transform-origin: left center;
+  transform: scaleX(0.8);
+  transition: transform 0.25s ease;
+}
+
+.shap-bar.neg {
+  background: var(--accent-crimson);
+}
+
+.shap-delta {
+  font-family: var(--font-mono);
+  text-align: right;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1.28fr 1fr;
+  gap: 20px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.81rem;
+}
+
+.data-table th,
+.data-table td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.data-table th {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.data-table td.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 1080px) {
+  .workspace-grid,
+  .bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <div class="brand-wrap">
+      <h1 class="brand-title">AegisFin AI (에이지스핀 AI)</h1>
+      <p class="brand-sub">시공간 그래프 신경망(T-GNN) 실시간 이상거래탐지(FDS) 및 농생명·소상공인 설명가능 대안신용평가(XAI-ACS) 통합 플랫폼</p>
+    </div>
+    <div class="metrics-bar">
+      <div class="metric-item">
+        <span class="metric-label">초당 그래프 트랜잭션 처리</span>
+        <span class="metric-val teal" id="kpi-tps">14,820 건/초</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-label">평균 추론 지연시간 (P99)</span>
+        <span class="metric-val" id="kpi-latency">11.4 ms</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-label">탐지된 순환 세탁 링</span>
+        <span class="metric-val crimson" id="kpi-rings">2 개 클러스터</span>
+      </div>
+      <div class="metric-item">
+        <span class="metric-label">중소·농생명 금리절감 추산</span>
+        <span class="metric-val amber" id="kpi-saving">-2.65 %p</span>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button class="btn-ghost" id="btn-inject-fraud" type="button">보이스피싱 세탁망 주입</button>
+      <button class="btn-primary" id="btn-freeze-ring" type="button">이상 계좌군 즉시 지급정지</button>
+    </div>
+  </header>
+
+  <main class="workspace-grid">
+    <section class="panel-card" aria-labelledby="fds-heading">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title" id="fds-heading">모듈 1 : 시공간 그래프 신경망(T-GNN) 실시간 이상거래 토폴로지</h2>
+          <p class="panel-desc">노드를 클릭하면 계좌 간 자금 순환도(PageRank), GNN 임베딩 이상치 점수, 지급정지 서킷브레이커 상태를 실시간 검증합니다.</p>
+        </div>
+        <span class="status-pill" id="fds-status-pill">실시간 감시 가동중</span>
+      </div>
+
+      <div class="scenario-toolbar">
+        <button class="btn-ghost active" data-graph-mode="all" type="button">전체 금융 네트워크 (11노드)</button>
+        <button class="btn-ghost" data-graph-mode="mule" type="button">대포통장·다단계 세탁 링 강조</button>
+        <button class="btn-ghost" data-graph-mode="agri" type="button">전북 농생명·로컬 가맹점 정산망</button>
+        <button class="btn-ghost" id="btn-reset-graph" type="button">네트워크 초기화</button>
+      </div>
+
+      <div class="canvas-frame">
+        <canvas id="gnn-canvas" width="760" height="360"></canvas>
+        <div class="canvas-legend">
+          <span>청록 : 일반 가맹점</span>
+          <span>하늘 : 전북 농생명 허브</span>
+          <span>황색 : 주의 관찰 계좌</span>
+          <span>적색 : 순환 세탁·피싱 링</span>
+        </div>
+      </div>
+
+      <div class="inspector-grid">
+        <div class="inspector-box">
+          <span class="inspector-title">선택된 계좌·가맹점 노드 식별자</span>
+          <span class="inspector-main" id="node-id-txt">ACCT-JB-904 (전북 로컬푸드 직매장 정산허브)</span>
+          <span class="inspector-sub" id="node-role-txt">유형 : 농생명 공급망 정산 허브 | 최근 1시간 이체 42건</span>
+        </div>
+        <div class="inspector-box">
+          <span class="inspector-title">T-GNN 구조적 이상치 확률 및 방어 조치</span>
+          <span class="inspector-main" id="node-score-txt">이상거래 확률 3.8% (정상 신뢰 등급 A+)</span>
+          <span class="inspector-sub" id="node-action-txt">권고 조치 : 실시간 즉시 정산 승인 및 우대 한도 부여</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel-card" aria-labelledby="acs-heading">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title" id="acs-heading">모듈 2 : 씬파일러 소상공인·농생명 대안신용평가 (XAI-ACS)</h2>
+          <p class="panel-desc">비금융 현금흐름 규칙성, 스마트팜·로컬푸드 납품 데이터, 계절성 보정 계수를 결합해 변수별 기여도를 산출합니다.</p>
+        </div>
+        <span class="status-pill" id="acs-preset-pill">김제 스마트팜 청년농</span>
+      </div>
+
+      <div class="scenario-toolbar">
+        <button class="btn-ghost active" data-preset="smartfarm" type="button">김제 스마트팜 청년농</button>
+        <button class="btn-ghost" data-preset="hanok" type="button">전주 한옥마을 로컬 F&amp;B</button>
+        <button class="btn-ghost" data-preset="iksan" type="button">익산 식품클러스터 가공업</button>
+        <button class="btn-ghost" data-preset="risk" type="button">고위험 한계 차주 비교</button>
+      </div>
+
+      <div class="acs-controls">
+        <div class="control-row">
+          <div class="control-label-wrap">
+            <label for="slider-cashflow">로컬푸드·공공플랫폼 정산 규칙성 지수</label>
+            <span class="control-val" id="val-cashflow">92 / 100</span>
+          </div>
+          <input type="range" id="slider-cashflow" min="10" max="100" value="92">
+        </div>
+        <div class="control-row">
+          <div class="control-label-wrap">
+            <label for="slider-utility">한전·통신·공과금 및 원자재 결제 성실도</label>
+            <span class="control-val" id="val-utility">95 / 100</span>
+          </div>
+          <input type="range" id="slider-utility" min="10" max="100" value="95">
+        </div>
+        <div class="control-row">
+          <div class="control-label-wrap">
+            <label for="slider-season">농생명·지역관광 계절성 변동 보정 지수</label>
+            <span class="control-val" id="val-season">88 / 100</span>
+          </div>
+          <input type="range" id="slider-season" min="10" max="100" value="88">
+        </div>
+        <div class="control-row">
+          <div class="control-label-wrap">
+            <label for="slider-network">공급망 네트워크(GNN) 거래처 신뢰 전파도</label>
+            <span class="control-val" id="val-network">90 / 100</span>
+          </div>
+          <input type="range" id="slider-network" min="10" max="100" value="90">
+        </div>
+      </div>
+
+      <div class="score-comparison">
+        <div class="score-box">
+          <span class="inspector-title">기존 재무제표·CB 신용점수</span>
+          <span class="score-num" id="score-legacy">615 점 (6등급)</span>
+          <span class="inspector-sub" id="rate-legacy">기존 산출 금리 : 연 9.40% (신용한도 1,500만 원)</span>
+        </div>
+        <div class="score-box highlight">
+          <span class="inspector-title">AegisFin AI 대안신용점수 (XAI-ACS)</span>
+          <span class="score-num" id="score-aegis">846 점 (2등급)</span>
+          <span class="inspector-sub" id="rate-aegis">우대 산출 금리 : 연 5.85% (-3.55%p, 한도 6,000만 원)</span>
+        </div>
+      </div>
+
+      <div class="shap-list" id="shap-container">
+        <div class="shap-row">
+          <span>정산 현금흐름 규칙성</span>
+          <div class="shap-track"><div class="shap-bar" id="bar-f1"></div></div>
+          <span class="shap-delta" id="txt-f1">+84 점</span>
+        </div>
+        <div class="shap-row">
+          <span>공과금·원자재 결제성실도</span>
+          <div class="shap-track"><div class="shap-bar" id="bar-f2"></div></div>
+          <span class="shap-delta" id="txt-f2">+62 점</span>
+        </div>
+        <div class="shap-row">
+          <span>농생명 계절성 보정계수</span>
+          <div class="shap-track"><div class="shap-bar" id="bar-f3"></div></div>
+          <span class="shap-delta" id="txt-f3">+45 점</span>
+        </div>
+        <div class="shap-row">
+          <span>GNN 거래처 신뢰 전파</span>
+          <div class="shap-track"><div class="shap-bar" id="bar-f4"></div></div>
+          <span class="shap-delta" id="txt-f4">+40 점</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section class="bottom-grid">
+    <div class="panel-card">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title">실시간 이상거래 탐지 및 자율 서킷브레이커 감사 로그</h2>
+          <p class="panel-desc">금융위원회 가이드라인 및 전자금융거래법 기준 설명가능 사유 코드 자동 생성 내역</p>
+        </div>
+        <span class="status-pill">무결성 검증 완료</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>탐지 시각</th>
+            <th>계좌·노드 식별자</th>
+            <th>트랜잭션 패턴</th>
+            <th>T-GNN 위험도</th>
+            <th>자율 방어 조치</th>
+          </tr>
+        </thead>
+        <tbody id="audit-log-body">
+          <tr>
+            <td class="num">14:22:08.14</td>
+            <td class="num">MULE-RING-401</td>
+            <td>3분 내 7개 대포계좌 순환 분산 이체</td>
+            <td class="num">98.4% (심각)</td>
+            <td>서킷브레이커 즉시 지급정지 대기</td>
+          </tr>
+          <tr>
+            <td class="num">14:21:54.02</td>
+            <td class="num">MULE-RING-402</td>
+            <td>신규 개설 후 고액 해외 가상자산 출금 시도</td>
+            <td class="num">96.1% (심각)</td>
+            <td>추가 생체인증 강제 및 지연 이체</td>
+          </tr>
+          <tr>
+            <td class="num">14:21:19.88</td>
+            <td class="num">AGRI-JB-208</td>
+            <td>김제 스마트팜 수확기 일시적 정산액 3.4배 증가</td>
+            <td class="num">4.2% (정상)</td>
+            <td>계절성 정상 패턴 인식·즉시 승인</td>
+          </tr>
+          <tr>
+            <td class="num">14:20:41.50</td>
+            <td class="num">SME-JJ-112</td>
+            <td>전주 로컬 가맹점 주말 관광객 매출 급증</td>
+            <td class="num">2.9% (정상)</td>
+            <td>정상 상권 매출로 분류·오탐 방지</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel-card">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title">모델 성능 벤치마크 (기존 규칙 기반 FDS 대비 실증 결과)</h2>
+          <p class="panel-desc">전북 지역 소상공인·농생명 거래 시나리오 120,000건 합성 데이터셋 검증</p>
+        </div>
+        <span class="status-pill">검증 정확도 99.1%</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>평가 지표</th>
+            <th>기존 규칙 FDS / 전통 CB</th>
+            <th>단일 트리 모형 (XGBoost)</th>
+            <th>AegisFin AI (T-GNN + XAI)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>보이스피싱·세탁 링 탐지율 (재현율)</td>
+            <td class="num">68.4%</td>
+            <td class="num">84.2%</td>
+            <td class="num">97.8%</td>
+          </tr>
+          <tr>
+            <td>정상 소상공인·농가 오탐률 (FPR)</td>
+            <td class="num">11.6%</td>
+            <td class="num">5.4%</td>
+            <td class="num">0.7%</td>
+          </tr>
+          <tr>
+            <td>씬파일러 우량 차주 발굴률</td>
+            <td class="num">31.0%</td>
+            <td class="num">58.5%</td>
+            <td class="num">89.4%</td>
+          </tr>
+          <tr>
+            <td>단건 추론 및 설명 생성 시간</td>
+            <td class="num">45.0 ms</td>
+            <td class="num">24.8 ms</td>
+            <td class="num">11.4 ms</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script>
+(() => {
+  const canvas = document.getElementById('gnn-canvas');
+  const ctx = canvas.getContext('2d');
+
+  let graphMode = 'all';
+  let ringFrozen = false;
+  let pulsePhase = 0;
+
+  const baseNodes = [
+    { id: 'ACCT-JB-904', label: '전북 로컬푸드 허브', type: 'agri', x: 160, y: 175, score: 3.8, role: '농생명 공급망 정산 허브 | 최근 1시간 이체 42건' },
+    { id: 'AGRI-JB-201', label: '김제 스마트팜 A', type: 'agri', x: 75, y: 95, score: 2.1, role: '청년농 스마트팜 경영체 | 정기 납품 정산 계좌' },
+    { id: 'AGRI-JB-208', label: '익산 식품클러스터 B', type: 'agri', x: 80, y: 265, score: 4.2, role: '농식품 가공 법인 | 수확기 원물 대금 정산' },
+    { id: 'SME-JJ-112', label: '전주 한옥마을 가맹점', type: 'normal', x: 265, y: 95, score: 2.9, role: '지역 F&B 소상공인 | 공공배달앱 일일 정산' },
+    { id: 'SME-GS-305', label: '군산 수산 가공소', type: 'normal', x: 270, y: 265, score: 5.1, role: '지역 수산물 유통 소상공인 | 콜드체인 정산' },
+    { id: 'BANK-JB-01', label: '지역 상생금융 게이트웨이', type: 'normal', x: 375, y: 180, score: 1.4, role: '오픈뱅킹 API 결제·정산 중계 노드' },
+    { id: 'WARN-ACCT-77', label: '고빈도 환전 브릿지', type: 'warn', x: 485, y: 110, score: 48.5, role: '비정형 야간 고빈도 집금 계좌 | 모니터링 대상' },
+    { id: 'WARN-ACCT-82', label: '타지역 휴면부활 계좌', type: 'warn', x: 485, y: 255, score: 54.2, role: '장기 휴면 해제 직후 다수 소액 입금 발생' },
+    { id: 'MULE-RING-401', label: '피싱 집금책 #1', type: 'fraud', x: 615, y: 85, score: 98.4, role: '보이스피싱 의심 순환 링 코어 | 3분 내 7회 분산이체' },
+    { id: 'MULE-RING-402', label: '대포통장 세탁 #2', type: 'fraud', x: 690, y: 180, score: 96.1, role: '다단계 자금세탁 중계 노드 | 가상자산 출금 시도' },
+    { id: 'MULE-RING-403', label: '대포통장 세탁 #3', type: 'fraud', x: 615, y: 280, score: 94.7, role: '순환형 환치기 말단 계좌 | 즉시 지급정지 권고' }
+  ];
+
+  const baseEdges = [
+    [0, 1], [0, 2], [0, 3], [0, 4], [0, 5],
+    [1, 3], [2, 4], [3, 5], [4, 5],
+    [5, 6], [5, 7],
+    [6, 8], [7, 10],
+    [8, 9], [9, 10], [10, 8], [6, 9]
+  ];
+
+  let nodes = JSON.parse(JSON.stringify(baseNodes));
+  let edges = JSON.parse(JSON.stringify(baseEdges));
+  let selectedNode = nodes[0];
+
+  function updateNodeInspector(node) {
+    selectedNode = node;
+    document.getElementById('node-id-txt').textContent = `${node.id} (${node.label})`;
+    document.getElementById('node-role-txt').textContent = `유형 : ${node.role}`;
+    const scoreEl = document.getElementById('node-score-txt');
+    const actionEl = document.getElementById('node-action-txt');
+
+    if (node.type === 'fraud') {
+      if (ringFrozen) {
+        scoreEl.textContent = `이상거래 확률 ${node.score.toFixed(1)}% (서킷브레이커 지급정지 완료)`;
+        actionEl.textContent = '방어 상태 : 계좌 출금 전면 차단 및 피해자 구제 절차 자동 개시';
+      } else {
+        scoreEl.textContent = `이상거래 확률 ${node.score.toFixed(1)}% (위험 등급 심각)`;
+        actionEl.textContent = '권고 조치 : 순환 세탁 링 탐지됨 - 즉시 지급정지 서킷브레이커 발동 필요';
+      }
+    } else if (node.type === 'warn') {
+      scoreEl.textContent = `이상거래 확률 ${node.score.toFixed(1)}% (주의 관찰 등급)`;
+      actionEl.textContent = '권고 조치 : 추가 생체인증 요청 및 30분 지연 이체 적용';
+    } else {
+      scoreEl.textContent = `이상거래 확률 ${node.score.toFixed(1)}% (정상 신뢰 등급 A+)`;
+      actionEl.textContent = '권고 조치 : 실시간 즉시 정산 승인 및 대안신용 가점 반영';
+    }
+  }
+
+  function drawGraph() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pulsePhase += 0.04;
+
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.07)';
+    ctx.lineWidth = 1;
+    for (let x = 40; x < canvas.width; x += 60) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvas.height);
+      ctx.stroke();
+    }
+    for (let y = 40; y < canvas.height; y += 60) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+      ctx.stroke();
+    }
+
+    edges.forEach(([i, j]) => {
+      const a = nodes[i];
+      const b = nodes[j];
+      if (!a || !b) return;
+      const isFraudEdge = a.type === 'fraud' && b.type === 'fraud';
+      const isAgriEdge = a.type === 'agri' || b.type === 'agri';
+
+      let alpha = 0.35;
+      if (graphMode === 'mule' && !isFraudEdge) alpha = 0.1;
+      if (graphMode === 'agri' && !isAgriEdge) alpha = 0.1;
+
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      if (isFraudEdge) {
+        ctx.strokeStyle = ringFrozen
+          ? `rgba(56, 189, 248, ${alpha + 0.35})`
+          : `rgba(244, 63, 94, ${alpha + 0.45})`;
+        ctx.lineWidth = 2.4;
+      } else if (isAgriEdge) {
+        ctx.strokeStyle = `rgba(56, 189, 248, ${alpha + 0.2})`;
+        ctx.lineWidth = 1.6;
+      } else {
+        ctx.strokeStyle = `rgba(45, 212, 191, ${alpha})`;
+        ctx.lineWidth = 1.4;
+      }
+      ctx.stroke();
+
+      if (!ringFrozen || !isFraudEdge) {
+        const t = (pulsePhase * (isFraudEdge ? 1.5 : 0.7) + (i * 0.17)) % 1;
+        const px = a.x + (b.x - a.x) * t;
+        const py = a.y + (b.y - a.y) * t;
+        ctx.beginPath();
+        ctx.arc(px, py, isFraudEdge ? 3.2 : 2.2, 0, Math.PI * 2);
+        ctx.fillStyle = isFraudEdge ? '#F43F5E' : '#2DD4BF';
+        ctx.fill();
+      }
+    });
+
+    nodes.forEach((node) => {
+      let color = '#2DD4BF';
+      if (node.type === 'agri') color = '#38BDF8';
+      if (node.type === 'warn') color = '#F59E0B';
+      if (node.type === 'fraud') color = ringFrozen ? '#94A3B8' : '#F43F5E';
+
+      let dim = false;
+      if (graphMode === 'mule' && node.type !== 'fraud' && node.type !== 'warn') dim = true;
+      if (graphMode === 'agri' && node.type !== 'agri') dim = true;
+
+      ctx.save();
+      ctx.globalAlpha = dim ? 0.25 : 1;
+
+      if (node.type === 'fraud' && !ringFrozen) {
+        const pulseRadius = 18 + Math.sin(pulsePhase * 2.2) * 5;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, pulseRadius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(244, 63, 94, 0.18)';
+        ctx.fill();
+      }
+
+      if (selectedNode && selectedNode.id === node.id) {
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 17, 0, Math.PI * 2);
+        ctx.strokeStyle = '#F3F6FA';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
+      ctx.beginPath();
+      ctx.arc(node.x, node.y, 11, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+
+      ctx.fillStyle = '#F3F6FA';
+      ctx.font = '600 11px "IBM Plex Sans KR", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(node.label, node.x, node.y + 25);
+
+      ctx.fillStyle = '#B4C0D3';
+      ctx.font = '600 10px "JetBrains Mono", monospace';
+      ctx.fillText(`${node.score.toFixed(1)}%`, node.x, node.y - 16);
+      ctx.restore();
+    });
+
+    requestAnimationFrame(drawGraph);
+  }
+
+  canvas.addEventListener('click', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const mx = (e.clientX - rect.left) * scaleX;
+    const my = (e.clientY - rect.top) * scaleY;
+
+    for (const node of nodes) {
+      const dist = Math.hypot(mx - node.x, my - node.y);
+      if (dist <= 22) {
+        updateNodeInspector(node);
+        break;
+      }
+    }
+  });
+
+  document.querySelectorAll('[data-graph-mode]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-graph-mode]').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      graphMode = btn.getAttribute('data-graph-mode');
+    });
+  });
+
+  document.getElementById('btn-inject-fraud').addEventListener('click', () => {
+    ringFrozen = false;
+    const newId = `MULE-RING-${400 + nodes.length}`;
+    const newNode = {
+      id: newId,
+      label: `신규 피싱 인출책 #${nodes.length - 7}`,
+      type: 'fraud',
+      x: 560 + ((nodes.length * 37) % 140),
+      y: 60 + ((nodes.length * 53) % 240),
+      score: 99.1,
+      role: '실시간 주입된 다단계 보이스피싱 세탁 계좌 | 고속 순환 이체 감지'
+    };
+    const newIndex = nodes.length;
+    nodes.push(newNode);
+    edges.push([8, newIndex], [newIndex, 9]);
+    document.getElementById('kpi-rings').textContent = '3 개 클러스터 (경보)';
+    const pill = document.getElementById('fds-status-pill');
+    pill.textContent = '고위험 세탁망 포착';
+    pill.classList.add('danger');
+    updateNodeInspector(newNode);
+  });
+
+  document.getElementById('btn-freeze-ring').addEventListener('click', () => {
+    ringFrozen = true;
+    const pill = document.getElementById('fds-status-pill');
+    pill.textContent = '서킷브레이커 지급정지 완료';
+    pill.classList.remove('danger');
+    document.getElementById('kpi-rings').textContent = '0 개 활성 (전원 차단)';
+    const fraudNode = nodes.find((n) => n.type === 'fraud') || nodes[0];
+    updateNodeInspector(fraudNode);
+  });
+
+  document.getElementById('btn-reset-graph').addEventListener('click', () => {
+    nodes = JSON.parse(JSON.stringify(baseNodes));
+    edges = JSON.parse(JSON.stringify(baseEdges));
+    ringFrozen = false;
+    graphMode = 'all';
+    document.getElementById('kpi-rings').textContent = '2 개 클러스터';
+    const pill = document.getElementById('fds-status-pill');
+    pill.textContent = '실시간 감시 가동중';
+    pill.classList.remove('danger');
+    updateNodeInspector(nodes[0]);
+  });
+
+  const presets = {
+    smartfarm: { name: '김제 스마트팜 청년농', legacy: 615, c: 92, u: 95, s: 88, n: 90 },
+    hanok: { name: '전주 한옥마을 로컬 F&B', legacy: 640, c: 94, u: 89, s: 82, n: 86 },
+    iksan: { name: '익산 식품클러스터 가공업', legacy: 660, c: 88, u: 93, s: 91, n: 94 },
+    risk: { name: '고위험 한계 차주 비교', legacy: 520, c: 32, u: 41, s: 28, n: 24 }
+  };
+
+  const sliders = {
+    c: document.getElementById('slider-cashflow'),
+    u: document.getElementById('slider-utility'),
+    s: document.getElementById('slider-season'),
+    n: document.getElementById('slider-network')
+  };
+
+  let baseLegacyScore = 615;
+
+  function recomputeACS() {
+    const c = Number(sliders.c.value);
+    const u = Number(sliders.u.value);
+    const s = Number(sliders.s.value);
+    const n = Number(sliders.n.value);
+
+    document.getElementById('val-cashflow').textContent = `${c} / 100`;
+    document.getElementById('val-utility').textContent = `${u} / 100`;
+    document.getElementById('val-season').textContent = `${s} / 100`;
+    document.getElementById('val-network').textContent = `${n} / 100`;
+
+    const d1 = Math.round((c - 50) * 1.95);
+    const d2 = Math.round((u - 50) * 1.38);
+    const d3 = Math.round((s - 50) * 1.18);
+    const d4 = Math.round((n - 50) * 1.02);
+
+    const aegisScore = Math.max(350, Math.min(990, baseLegacyScore + d1 + d2 + d3 + d4));
+    const grade = aegisScore >= 870 ? 1 : aegisScore >= 805 ? 2 : aegisScore >= 740 ? 3 : aegisScore >= 665 ? 4 : 6;
+    const legacyGrade = baseLegacyScore >= 665 ? 5 : 6;
+
+    const legacyRate = (11.2 - (baseLegacyScore - 500) * 0.015).toFixed(2);
+    const aegisRate = Math.max(4.2, (11.2 - (aegisScore - 500) * 0.0155)).toFixed(2);
+    const saving = (Number(legacyRate) - Number(aegisRate)).toFixed(2);
+
+    document.getElementById('score-legacy').textContent = `${baseLegacyScore} 점 (${legacyGrade}등급)`;
+    document.getElementById('rate-legacy').textContent = `기존 산출 금리 : 연 ${legacyRate}% (한도 1,500만 원)`;
+    document.getElementById('score-aegis').textContent = `${aegisScore} 점 (${grade}등급)`;
+    document.getElementById('rate-aegis').textContent = `우대 산출 금리 : 연 ${aegisRate}% (-${saving}%p, 한도 6,000만 원)`;
+    document.getElementById('kpi-saving').textContent = `-${saving} %p`;
+
+    const updateBar = (idBar, idTxt, delta) => {
+      const bar = document.getElementById(idBar);
+      const txt = document.getElementById(idTxt);
+      const scale = Math.min(1, Math.max(0.12, (Math.abs(delta) + 15) / 100));
+      bar.style.transform = `scaleX(${scale.toFixed(2)})`;
+      bar.classList.toggle('neg', delta < 0);
+      txt.textContent = `${delta >= 0 ? '+' : ''}${delta} 점`;
+    };
+
+    updateBar('bar-f1', 'txt-f1', d1);
+    updateBar('bar-f2', 'txt-f2', d2);
+    updateBar('bar-f3', 'txt-f3', d3);
+    updateBar('bar-f4', 'txt-f4', d4);
+  }
+
+  Object.values(sliders).forEach((s) => s.addEventListener('input', recomputeACS));
+
+  document.querySelectorAll('[data-preset]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-preset]').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const key = btn.getAttribute('data-preset');
+      const p = presets[key];
+      if (!p) return;
+      baseLegacyScore = p.legacy;
+      sliders.c.value = p.c;
+      sliders.u.value = p.u;
+      sliders.s.value = p.s;
+      sliders.n.value = p.n;
+      document.getElementById('acs-preset-pill').textContent = p.name;
+      recomputeACS();
+    });
+  });
+
+  updateNodeInspector(nodes[0]);
+  recomputeACS();
+  drawGraph();
+})();
+</script>
+</body>
+</html>
